@@ -1269,7 +1269,7 @@ bool SoPlexBase<R>::getRowViolation(R& maxviol, R& sumviol)
    assert(primal.dim() == numCols());
 
    VectorBase<R> activity(numRows());
-   _realLP->computePrimalActivity(primal, activity, true);
+   _realLP->computePrimalActivity(primal, activity);
    maxviol = 0.0;
    sumviol = 0.0;
 
