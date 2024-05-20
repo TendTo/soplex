@@ -129,6 +129,10 @@ if(MSVC)
    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
+if(EXTERNAL_FMT)
+    add_compile_definitions(SOPLEX_EXTERNAL_FMT)
+endif()
+
 # create soplex library with pic
 add_library(libsoplex-pic STATIC ${sources})
 if(MSVC)

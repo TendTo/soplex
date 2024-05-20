@@ -25,6 +25,13 @@
 #ifndef _SOPLEX_FMT_HPP_
 #define _SOPLEX_FMT_HPP_
 
+#ifdef SOPLEX_EXTERNAL_FMT
+
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
+#else
+
 #ifndef FMT_HEADER_ONLY
 #define FMT_HEADER_ONLY
 #endif
@@ -69,6 +76,8 @@
 #ifdef SOPLEX_DEFINED_WIN32_LEAN_AND_MEAN
 #undef WIN32_LEAN_AND_MEAN
 #undef SOPLEX_DEFINED_WIN32_LEAN_AND_MEAN
+#endif
+
 #endif
 
 #endif
