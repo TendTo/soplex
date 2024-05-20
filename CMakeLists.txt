@@ -42,6 +42,7 @@ option(SANITIZE_UNDEFINED "should the undefined behavior sanitizer be enabled in
 option(SANITIZE_THREAD "should the thread sanitizer be enabled in debug mode if available" OFF)
 option(COVERAGE "enable coverage support" OFF)
 option(PAPILO "should papilo library be linked" ON)
+option(EXTERNAL_FMT "use external fmt library" OFF)
 
 SET(COVERAGE_CTEST_ARGS "" CACHE STRING "additional ctest arguments for coverage")
 
