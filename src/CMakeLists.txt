@@ -173,9 +173,9 @@ target_link_libraries(libsoplex ${libs})
 # create C shared library
 add_library(libsoplexshared SHARED soplex_interface.cpp ${sources})
 if(MSVC)
-    setLibProperties(libsoplexshared "libsoplexshared")
+    setLibProperties(libsoplexshared "libsoplex")
 else()
-   setLibProperties(libsoplexshared "soplexshared")
+   setLibProperties(libsoplexshared "soplex")
 endif()
 
 set_target_properties(libsoplexshared PROPERTIES
@@ -184,7 +184,7 @@ set_target_properties(libsoplexshared PROPERTIES
 add_dependencies(libsoplexshared soplex_update_githash libsoplex)
 if(MSVC)
     target_compile_options(libsoplexshared PUBLIC "/Zc:__cplusplus")
-    setLibProperties(libsoplexshared "libsoplexshared")
+    setLibProperties(libsoplexshared "libsoplex")
 endif()
 target_include_directories(libsoplexshared PUBLIC
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
