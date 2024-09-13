@@ -23,7 +23,9 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "soplex/spxgithash.h"
+#ifndef SPX_GITHASH
 #include "soplex/git_hash.cpp"
+#endif
 
 namespace soplex
 {
