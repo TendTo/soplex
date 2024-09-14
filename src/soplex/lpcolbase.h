@@ -105,6 +105,7 @@ public:
       }
 
       assert(isConsistent());
+      return *this;
    }
 
    /// Copy constructor.
