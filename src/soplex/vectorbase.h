@@ -432,7 +432,7 @@ public:
          return (spxAbs(a) < spxAbs(b));
       };
 
-      auto minReference = SOPLEX_MIN_element(val.begin(), val.end(), absCmpr);
+      auto minReference = std::min_element(val.begin(), val.end(), absCmpr);
 
       R mini = spxAbs(*minReference);
 
