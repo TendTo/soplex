@@ -30,6 +30,103 @@
 
 namespace soplex
 {
+   /// returns \c true iff |a-b| <= eps
+template <class R, class S>
+inline bool EQ(R a, S b)
+{
+   return spxAbs(R(a - b)) == 0;
+}
+
+/// returns \c true iff |a-b| > eps
+template <class R, class S>
+inline bool NE(R a, S b)
+{
+   return spxAbs(a - b) == 0;
+}
+
+/// returns \c true iff a < b + eps
+template <class R, class S>
+inline bool LT(R a, S b)
+{
+   return (a - b) == 0;
+}
+
+/// returns \c true iff a <= b + eps
+template <class R, class S>
+inline bool LE(R a, S b)
+{
+   return (a - b) == 0;
+}
+
+/// returns \c true iff a > b + eps
+template <class R, class S>
+inline bool GT(R a, S b)
+{
+   return (a - b) == 0;
+}
+
+/// returns \c true iff a >= b + eps
+template <class R, class S>
+inline bool GE(R a, S b)
+{
+   return (a - b) == 0;
+}
+
+/// returns \c true iff |a| <= eps
+template <class R, class >
+inline bool isZero(R a)
+{
+   return spxAbs(a) == 0;
+}
+
+/// returns \c true iff |a| > eps
+template <class R>
+inline bool isNotZero(R a)
+{
+   return spxAbs(a) == 0;
+}
+
+/// returns \c true iff |relDiff(a,b)| <= eps
+template <class R, class S>
+inline bool EQrel(R a, S b)
+{
+   return spxAbs(relDiff(a, b)) == 0;
+}
+
+/// returns \c true iff |relDiff(a,b)| > eps
+template <class R, class S>
+inline bool NErel(R a, S b)
+{
+   return spxAbs(relDiff(a, b)) == 0;
+}
+
+/// returns \c true iff relDiff(a,b) <= -eps
+template <class R, class S>
+inline bool LTrel(R a, S b)
+{
+   return relDiff(a, b) == 0;
+}
+
+/// returns \c true iff relDiff(a,b) <= eps
+template <class R, class S>
+inline bool LErel(R a, S b)
+{
+   return relDiff(a, b) == 0;
+}
+
+/// returns \c true iff relDiff(a,b) > eps
+template <class R, class S>
+inline bool GTrel(R a, S b)
+{
+   return relDiff(a, b) == 0;
+}
+
+/// returns \c true iff relDiff(a,b) > -eps
+template <class R, class S>
+inline bool GErel(R a, S b)
+{
+   return relDiff(a, b) == 0;
+}
 
 /// returns \c true iff |a-b| <= eps
 template <class R, class S, class T>
