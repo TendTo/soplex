@@ -3,6 +3,20 @@
 extern "C" {
 #endif
 
+extern const double SoPlex_infinity;
+
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
+void* SoPlex_createLpProblemRational(int numCols, int numRows);
+void SoPlex_loadLpProblemRational(void* soplex, void* lpProblem);
+void SoPlex_freeLPProblemRational(void* lpProblem);
+void SoPlex_addColToLpProblemRational(void* lpProblem, mpq_t colvals[], int rowIdxs[], int nnonzeros,
+                               mpq_t obj, mpq_t lb, mpq_t ub);
+void SoPlex_addRowToLpProblemRational(void* lpProblem, mpq_t rowvals[], int colIdxs[], int nnonzeros,
+                              mpq_t lb, mpq_t ub);
+int SoPlex_getNumColsLpProblemRational(void* lpProblem);
+int SoPlex_getNumRowsLpProblemRational(void* lpProblem);
+#endif
+
 /** creates new SoPlex struct **/
 void* SoPlex_create();
 
@@ -24,8 +38,12 @@ void SoPlex_clearLPReal(void* soplex);
 /** returns number of rows **/
 int SoPlex_numRows(void* soplex);
 
+int SoPlex_numRowsRational(void* soplex);
+
 /** returns number of columns **/
 int SoPlex_numCols(void* soplex);
+
+int SoPlex_numColsRational(void* soplex);
 
 /** enables rational solving mode  **/
 void SoPlex_setRational(void* soplex);
@@ -39,8 +57,14 @@ void SoPlex_setIntParam(void* soplex, int paramcode, int paramvalue);
 /** sets real parameter value **/
 void SoPlex_setRealParam(void* soplex, int paramcode, double paramvalue);
 
+/** returns value of boolean parameter **/
+int SoPlex_getBoolParam(void* soplex, int paramcode);
+
 /** returns value of integer parameter **/
 int SoPlex_getIntParam(void* soplex, int paramcode);
+
+/** returns value of real parameter **/
+double SoPlex_getRealParam(void* soplex, int paramcode);
 
 /** adds a single (floating point) column **/
 void SoPlex_addColReal(void* soplex, double* colentries, int colsize, int nnonzeros, double objval,
@@ -64,6 +88,9 @@ void SoPlex_removeRowReal(void* soplex, int rowidx);
 void SoPlex_addRowRational(void* soplex, long* rownums, long* rowdenoms, int rowsize, int nnonzeros,
                            long lbnum, long lbdenom, long ubnum, long ubdenom);
 
+int SoPlex_hasDualFarkas(void* soplex);
+int SoPlex_hasSol(void* soplex);
+
 /** gets primal solution **/
 void SoPlex_getPrimalReal(void* soplex, double* primal, int dim);
 
@@ -71,6 +98,11 @@ void SoPlex_getPrimalReal(void* soplex, double* primal, int dim);
 *   The caller needs to ensure the char array is freed.
 **/
 char* SoPlex_getPrimalRationalString(void* soplex, int dim);
+
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
+void SoPlex_getPrimalRational_mpq(void* soplex, mpq_t* primal);
+void SoPlex_getDualRational_mpq(void* soplex, mpq_t* dual);
+#endif
 
 /** gets dual solution **/
 void SoPlex_getDualReal(void* soplex, double* dual, int dim);
@@ -141,6 +173,10 @@ void SoPlex_changeVarBoundsReal(void* soplex, int colidx, double lb, double ub);
 void SoPlex_changeVarBoundsRational(void* soplex, int colidx, long lbnum, long lbdenom, long ubnum,
                                     long ubdenom);
 
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
+void SoPlex_changeVarBoundsRational_mpq(void* soplex, int colidx, mpq_t lb, mpq_t ub);
+#endif
+
 /** changes vector of lower bounds to lb **/
 void SoPlex_changeLowerReal(void* soplex, double* lb, int dim);
 
@@ -162,6 +198,15 @@ void SoPlex_changeVarUpperReal(void* soplex, int colidx, double ub);
 /** gets upper bound vector of columns into ub **/
 void SoPlex_getUpperReal(void* soplex, double* ub, int dim);
 
+int SoPlex_numPrecisionBoosts(void* soplex);
+int SoPlex_numRefinements(void* soplex);
+double SoPlex_getMaxBoundViolationRationalToDouble(void* soplex);
+double SoPlex_getMaxRowViolationRationalToDouble(void* soplex);
+
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
+void SoPlex_getColActivityRational_mpq(void* soplex, int colidx, mpq_t val);
+void SoPlex_getRowActivityRational_mpq(void* soplex, int rowidx, mpq_t val);
+#endif
 /** returns status of row
  *  0 -> row is set to its upper bound
  *  1 -> row is set to its lower bound
