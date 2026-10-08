@@ -14,6 +14,7 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 set(sources
     soplex/didxset.cpp
     soplex/idxset.cpp
+    soplex/lightrat.cpp
     soplex/mpsinput.cpp
     soplex/nameset.cpp
     soplex/spxdefines.cpp
@@ -44,6 +45,7 @@ set(headers
     soplex/idlist.h
     soplex/idxset.h
     soplex/islist.h
+    soplex/lightrat.h
     soplex/lpcolbase.h
     soplex/lpcol.h
     soplex/lpcolsetbase.h
@@ -120,6 +122,7 @@ set(headers
     soplex/dvector.h
     soplex/wallclocktimer.h
     soplex/fmt.hpp
+    soplex/rat.h
     soplex_interface.h
     )
 
@@ -200,6 +203,10 @@ if(EMSCRIPTEN AND EMSCRIPTEN_HTML)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif()
 set_property(TARGET soplex PROPERTY INTERPROCEDURAL_OPTIMIZATION ${LTO_AVAILABLE})
+
+add_executable(testLightRat ${PROJECT_SOURCE_DIR}/tests/testLightRat.cpp)
+target_link_libraries(testLightRat LINK_PUBLIC libsoplex)
+set_property(TARGET testLightRat PROPERTY INTERPROCEDURAL_OPTIMIZATION ${LTO_AVAILABLE})
 
 if(SANITIZE)
     find_package(Sanitizers)

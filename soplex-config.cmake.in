@@ -17,6 +17,8 @@ if(SOPLEX_WITH_SYSTEM_FMT)
   find_dependency(fmt CONFIG)
 endif()
 
+set(SOPLEX_WITH_LIGHT_RAT @SOPLEX_WITH_LIGHT_RAT@)
+
 # If SoPlex was built with MPFR then we also need it.
 set(SOPLEX_WITH_MPFR @SOPLEX_WITH_MPFR@)
 if(SOPLEX_WITH_MPFR)

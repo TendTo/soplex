@@ -49,6 +49,7 @@ option(COVERAGE "enable coverage support" OFF)
 option(PAPILO "should papilo library be linked" ON)
 option(LTO "Enable Link Time Optimization, aka Interprocedural Optimization" OFF)
 option(SYSTEM_FMT "Use system FMT library instead of bundled headers" OFF)
+option(LIGHT_RAT "Use LightRat rational numbers" OFF)
 
 if(LTO)
     include(CheckIPOSupported)
@@ -159,6 +160,10 @@ if(SYSTEM_FMT)
     set(libs ${libs} fmt::fmt)
 endif()
 
+if(LIGHT_RAT)
+    set(SOPLEX_WITH_LIGHT_RAT on)
+endif()
+
 if(ZLIB)
     find_package(ZLIB)
 endif()
@@ -243,6 +248,10 @@ if(BOOST)
     else()
         set(BOOST off)
     endif()
+endif()
+
+if(CMAKE_C_BYTE_ORDER STREQUAL "BIG_ENDIAN")
+    set(SOPLEX_WORDS_BIGENDIAN on)
 endif()
 
 # disable fused floating point contraction to enhance reproducibility across compilers and architectures

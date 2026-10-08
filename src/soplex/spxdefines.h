@@ -79,6 +79,9 @@
 
 #ifdef SOPLEX_WITH_GMP
 #include <boost/multiprecision/gmp.hpp>
+#ifdef SOPLEX_WITH_LIGHT_RAT
+#include "soplex/lightrat.h"
+#endif
 #else
 #include <boost/multiprecision/cpp_int.hpp>
 #endif
@@ -517,6 +520,20 @@ inline number<gmp_rational, eto> frexp(number<gmp_rational, eto>, int* exp)
    assert(false);
    return number<gmp_rational>();
 }
+
+#ifdef SOPLEX_WITH_LIGHT_RAT
+template <expression_template_option ET>
+number<LightRat, ET> ldexp(number<LightRat, ET>, int exp) {
+   assert(false);
+   return number<LightRat>();
+}
+template <expression_template_option ET>
+number<LightRat, ET> frexp(number<::soplex::LightRat, ET>, int *exp) {
+   assert(false);
+   return boost::multiprecision::number<LightRat>();
+}
+#endif
+
 #else
 inline cpp_rational ldexp(cpp_rational r, int exp)
 {

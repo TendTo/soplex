@@ -1,6 +1,20 @@
+#ifndef _SOPLEX_INTERFACE_H_
+#define _SOPLEX_INTERFACE_H_
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST) && defined(SOPLEX_WITH_LIGHT_RAT)
+#include "soplex/rat.h"
+#endif
+
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
+#ifdef SOPLEX_WITH_LIGHT_RAT
+typedef spx_lightrat_t spx_rat_t;
+#else
+typedef mpq_t spx_rat_t;
+#endif
 #endif
 
 extern const double SoPlex_infinity;
@@ -9,10 +23,10 @@ extern const double SoPlex_infinity;
 void* SoPlex_createLpProblemRational(int numCols, int numRows);
 void SoPlex_loadLpProblemRational(void* soplex, void* lpProblem);
 void SoPlex_freeLPProblemRational(void* lpProblem);
-void SoPlex_addColToLpProblemRational(void* lpProblem, mpq_t colvals[], int rowIdxs[], int nnonzeros,
-                               mpq_t obj, mpq_t lb, mpq_t ub);
-void SoPlex_addRowToLpProblemRational(void* lpProblem, mpq_t rowvals[], int colIdxs[], int nnonzeros,
-                              mpq_t lb, mpq_t ub);
+void SoPlex_addColToLpProblemRational(void* lpProblem, const spx_rat_t colvals[], int rowIdxs[], int nnonzeros,
+                               const spx_rat_t obj, const spx_rat_t lb, const spx_rat_t ub);
+void SoPlex_addRowToLpProblemRational(void* lpProblem, const spx_rat_t rowvals[], int colIdxs[], int nnonzeros,
+                              const spx_rat_t lb, const spx_rat_t ub);
 int SoPlex_getNumColsLpProblemRational(void* lpProblem);
 int SoPlex_getNumRowsLpProblemRational(void* lpProblem);
 #endif
@@ -100,9 +114,9 @@ void SoPlex_getPrimalReal(void* soplex, double* primal, int dim);
 char* SoPlex_getPrimalRationalString(void* soplex, int dim);
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
-void SoPlex_getPrimalRational_mpq(void* soplex, mpq_t* primal);
-void SoPlex_getDualRational_mpq(void* soplex, mpq_t* dual);
-void SoPlex_getDualFarkasRational_mpq(void* soplex, mpq_t* farkas);
+void SoPlex_getPrimalRational_mpq(void* soplex, spx_rat_t* primal);
+void SoPlex_getDualRational_mpq(void* soplex, spx_rat_t* dual);
+void SoPlex_getDualFarkasRational_mpq(void* soplex, spx_rat_t* farkas);
 #endif
 
 /** gets dual solution **/
@@ -175,7 +189,7 @@ void SoPlex_changeVarBoundsRational(void* soplex, int colidx, long lbnum, long l
                                     long ubdenom);
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
-void SoPlex_changeVarBoundsRational_mpq(void* soplex, int colidx, mpq_t lb, mpq_t ub);
+void SoPlex_changeVarBoundsRational_mpq(void* soplex, int colidx, spx_rat_t lb, spx_rat_t ub);
 #endif
 
 /** changes vector of lower bounds to lb **/
@@ -205,8 +219,8 @@ double SoPlex_getMaxBoundViolationRationalToDouble(void* soplex);
 double SoPlex_getMaxRowViolationRationalToDouble(void* soplex);
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
-void SoPlex_getColActivityRational_mpq(void* soplex, int colidx, mpq_t val);
-void SoPlex_getRowActivityRational_mpq(void* soplex, int rowidx, mpq_t val);
+void SoPlex_getColActivityRational_mpq(void* soplex, int colidx, spx_rat_t val);
+void SoPlex_getRowActivityRational_mpq(void* soplex, int rowidx, spx_rat_t val);
 #endif
 /** returns status of row
  *  0 -> row is set to its upper bound
@@ -245,4 +259,6 @@ void SoPlex_getRowBoundsRational(void* soplex, int i, long* lbnum, long* lbdenom
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -5,6 +5,15 @@
 using namespace soplex;
 
 extern "C" {
+
+#if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
+#ifdef SOPLEX_WITH_LIGHT_RAT
+#define rational_set spx_rat_set
+#else
+#define rational_set mpq_set
+#endif
+#endif
+
 const double SoPlex_infinity = ::soplex::infinity;
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
@@ -29,8 +38,8 @@ void SoPlex_freeLPProblemRational(void* lpProblem) {
    delete lp;
 }
 
-void SoPlex_addColToLpProblemRational(void* lpProblem, mpq_t* colvals, int rowIdxs[], int nnonzeros,
-                               mpq_t obj, mpq_t lb, mpq_t ub)
+void SoPlex_addColToLpProblemRational(void* lpProblem, const spx_rat_t colvals[], int rowIdxs[], int nnonzeros,
+                               const spx_rat_t obj, const spx_rat_t lb, const spx_rat_t ub)
 {
    /* coverity[unreachable] */
    auto lp = static_cast<LpProblemRational *>(lpProblem);
@@ -39,14 +48,14 @@ void SoPlex_addColToLpProblemRational(void* lpProblem, mpq_t* colvals, int rowId
    /* add nonzero entries to column vector */
    for(int i = 0; i < nnonzeros; ++i)
    {
-      col.add(rowIdxs[i], colvals[i]);
+      col.add(rowIdxs[i], Rational{colvals[i]});
    }
 
    lp->cols.add(LPColRational(Rational{obj}, col, Rational{ub}, Rational{lb}));
 }
 
-void SoPlex_addRowToLpProblemRational(void* lpProblem, mpq_t rowvals[], int colIdxs[], int nnonzeros,
-                              mpq_t lb, mpq_t ub)
+void SoPlex_addRowToLpProblemRational(void* lpProblem, const spx_rat_t rowvals[], int colIdxs[], int nnonzeros,
+                              const spx_rat_t lb, const spx_rat_t ub)
 {
    /* coverity[unreachable] */
    auto lp = static_cast<LpProblemRational *>(lpProblem);
@@ -55,7 +64,7 @@ void SoPlex_addRowToLpProblemRational(void* lpProblem, mpq_t rowvals[], int colI
    /* add nonzero entries to row vector */
    for(int i = 0; i < nnonzeros; ++i)
    {
-      row.add(colIdxs[i], rowvals[i]);
+      row.add(colIdxs[i], Rational{rowvals[i]});
    }
 
    lp->rows.add(LPRowRational(Rational{lb}, row, Rational{ub}));
@@ -367,7 +376,7 @@ void SoPlex_getDualReal(void* soplex, double* dual, int dim)
 
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
-void SoPlex_getDuallRational_mpq(void* soplex, int dim, mpq_t* y)
+void SoPlex_getDuallRational_mpq(void* soplex, int dim, spx_rat_t* y)
 {
 #ifndef SOPLEX_WITH_BOOST
    throw SPxException("Rational functions cannot be used when built without Boost.");
@@ -380,7 +389,7 @@ void SoPlex_getDuallRational_mpq(void* soplex, int dim, mpq_t* y)
 
    for(int i = 0; i < dim; ++i)
    {
-      mpq_set(y[i], dual[i].backend().data());
+      rational_set(y[i], dual[i].backend().data());
    }
 }
 #endif
@@ -453,7 +462,7 @@ void SoPlex_changeObjRational(void* soplex, long* objnums, long* objdenoms, int 
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
 /** changes rational objective function vector to obj **/
-void SoPlex_changeObjRational_mpq(void* soplex, mpq_t* obj, int dim)
+void SoPlex_changeObjRational_mpq(void* soplex, spx_rat_t* obj, int dim)
 {
 #ifndef SOPLEX_WITH_BOOST
    throw SPxException("Rational functions cannot be used when built without Boost.");
@@ -510,7 +519,7 @@ void SoPlex_changeLhsRational(void* soplex, long* lhsnums, long* lhsdenoms, int 
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
 /** changes rational left-hand side vector for constraints to lhs **/
-void SoPlex_changeLhsRational_mpq(void* soplex, mpq_t* lhsvals, int dim)
+void SoPlex_changeLhsRational_mpq(void* soplex, spx_rat_t* lhsvals, int dim)
 {
 #ifndef SOPLEX_WITH_BOOST
    throw SPxException("Rational functions cannot be used when built without Boost.");
@@ -584,7 +593,7 @@ void SoPlex_changeRhsRational(void* soplex, long* rhsnums, long* rhsdenoms, int 
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
 /** changes rational right-hand side vector for constraints to rhs **/
-void SoPlex_changeRhsRational_mpq(void* soplex, mpq_t* rhsvals, int dim)
+void SoPlex_changeRhsRational_mpq(void* soplex, spx_rat_t* rhsvals, int dim)
 {
 #ifndef SOPLEX_WITH_BOOST
    throw SPxException("Rational functions cannot be used when built without Boost.");
@@ -676,7 +685,7 @@ void SoPlex_changeVarBoundsRational(void* soplex, int colidx, long lbnum, long l
 
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
 /** changes rational bounds of a column to lbnum/lbdenom and ubnum/ubdenom **/
-void SoPlex_changeVarBoundsRational_mpq(void* soplex, int colidx, mpq_t lb, mpq_t ub)
+void SoPlex_changeVarBoundsRational_mpq(void* soplex, int colidx, spx_rat_t lb, spx_rat_t ub)
 {
 #ifndef SOPLEX_WITH_BOOST
    throw SPxException("Rational functions cannot be used when built without Boost.");
@@ -754,17 +763,17 @@ void SoPlex_getUpperReal(void* soplex, double* ub, int dim)
       ub[i] = ubvec[i];
 }
 
-void SoPlex_getColActivityRational_mpq(void* soplex, const int colidx, mpq_t val) {
+void SoPlex_getColActivityRational_mpq(void* soplex, const int colidx, spx_rat_t val) {
    SoPlex* so = (SoPlex*)(soplex);
    Rational valRational;
    so->getColActivityRational(colidx, valRational);
-   mpq_set(val, valRational.backend().data());
+   rational_set(val, valRational.backend().data());
 }
-void SoPlex_getRowActivityRational_mpq(void* soplex, int rowidx, mpq_t val) {
+void SoPlex_getRowActivityRational_mpq(void* soplex, int rowidx, spx_rat_t val) {
    SoPlex* so = (SoPlex*)(soplex);
    Rational valRational;
    so->getRowActivityRational(rowidx, valRational);
-   mpq_set(val, valRational.backend().data());
+   rational_set(val, valRational.backend().data());
 }
 
 /** returns status of row
@@ -895,29 +904,29 @@ double SoPlex_getMaxRowViolationRationalToDouble(void *soplex) {
    so->getRowViolationRational(maxRowViolation, sumRowViolation);
    return maxRowViolation.convert_to<double>();
 }
-void SoPlex_getPrimalRational_mpq(void *soplex, mpq_t *primal) {
+void SoPlex_getPrimalRational_mpq(void *soplex, spx_rat_t *primal) {
    SoPlex* so = (SoPlex*)(soplex);
    VectorRational primalVec(so->numColsRational());
    so->getPrimalRational(primalVec);
    for(int i = 0; i < primalVec.dim(); i++) {
-      mpq_set(primal[i], primalVec[i].backend().data());
+      rational_set(primal[i], primalVec[i].backend().data());
    }
 }
-void SoPlex_getDualRational_mpq(void *soplex, mpq_t *dual) {
+void SoPlex_getDualRational_mpq(void *soplex, spx_rat_t *dual) {
    SoPlex* so = (SoPlex*)(soplex);
    VectorRational dualVec(so->numRowsRational());
    so->getDualRational(dualVec);
    for(int i = 0; i < dualVec.dim(); i++) {
-      mpq_set(dual[i], dualVec[i].backend().data());
+      rational_set(dual[i], dualVec[i].backend().data());
    }
 }
 
-void SoPlex_getDualFarkasRational_mpq(void* soplex, mpq_t* farkas) {
+void SoPlex_getDualFarkasRational_mpq(void* soplex, spx_rat_t* farkas) {
    SoPlex* so = (SoPlex*)(soplex);
    VectorRational farkasVec(so->numRowsRational());
    so->getDualFarkasRational(farkasVec);
    for(int i = 0; i < farkasVec.dim(); i++) {
-      mpq_set(farkas[i], farkasVec[i].backend().data());
+      rational_set(farkas[i], farkasVec[i].backend().data());
    }
 }
 

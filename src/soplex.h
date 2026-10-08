@@ -112,6 +112,14 @@ namespace mpf = boost::multiprecision;
 namespace soplex
 {
 
+#ifdef SOPLEX_WITH_GMP
+#ifdef SOPLEX_WITH_LIGHT_RAT
+using rational_t = spx_lightrat_t;
+#else
+using rational_t = mpq_t;
+#endif
+#endif
+
 /**@class SoPlex
  * @brief   Preconfigured SoPlex LP-solver.
  * @ingroup Algo
@@ -436,13 +444,13 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// adds a single row (GMP only method)
-   void addRowRational(const mpq_t* lhs, const mpq_t* rowValues, const int* rowIndices,
-                       const int rowSize, const mpq_t* rhs);
+   void addRowRational(const rational_t* lhs, const rational_t* rowValues, const int* rowIndices,
+                       const int rowSize, const rational_t* rhs);
 
    /// adds a set of rows (GMP only method)
-   void addRowsRational(const mpq_t* lhs, const mpq_t* rowValues, const int* rowIndices,
+   void addRowsRational(const rational_t* lhs, const rational_t* rowValues, const int* rowIndices,
                         const int* rowStarts, const int* rowLengths, const int numRows, const int numValues,
-                        const mpq_t* rhs);
+                        const rational_t* rhs);
 #endif
 
    /// adds multiple rows
@@ -453,13 +461,13 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// adds a single column (GMP only method)
-   void addColRational(const mpq_t* obj, const mpq_t* lower, const mpq_t* colValues,
-                       const int* colIndices, const int colSize, const mpq_t* upper);
+   void addColRational(const rational_t* obj, const rational_t* lower, const rational_t* colValues,
+                       const int* colIndices, const int colSize, const rational_t* upper);
 
    /// adds a set of columns (GMP only method)
-   void addColsRational(const mpq_t* obj, const mpq_t* lower, const mpq_t* colValues,
+   void addColsRational(const rational_t* obj, const rational_t* lower, const rational_t* colValues,
                         const int* colIndices, const int* colStarts, const int* colLengths, const int numCols,
-                        const int numValues, const mpq_t* upper);
+                        const int numValues, const rational_t* upper);
 #endif
 
    /// adds multiple columns
@@ -476,7 +484,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes left-hand side of row \p i to \p lhs (GMP only method)
-   void changeLhsRational(int i, const mpq_t* lhs);
+   void changeLhsRational(int i, const rational_t* lhs);
 #endif
 
    /// changes right-hand side vector to \p rhs
@@ -484,7 +492,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes right-hand side vector to \p rhs (GMP only method)
-   void changeRhsRational(const mpq_t* rhs, int rhsSize);
+   void changeRhsRational(const rational_t* rhs, int rhsSize);
 #endif
 
    /// changes right-hand side of row \p i to \p rhs
@@ -498,7 +506,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes left- and right-hand side of row \p i (GMP only method)
-   void changeRangeRational(int i, const mpq_t* lhs, const mpq_t* rhs);
+   void changeRangeRational(int i, const rational_t* lhs, const rational_t* rhs);
 #endif
 
    /// replaces column \p i with \p lpcol
@@ -512,7 +520,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes lower bound of column i to \p lower (GMP only method)
-   void changeLowerRational(int i, const mpq_t* lower);
+   void changeLowerRational(int i, const rational_t* lower);
 #endif
 
    /// changes vector of upper bounds to \p upper
@@ -523,7 +531,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes upper bound of column i to \p upper (GMP only method)
-   void changeUpperRational(int i, const mpq_t* upper);
+   void changeUpperRational(int i, const rational_t* upper);
 #endif
 
    /// changes vectors of column bounds to \p lower and \p upper
@@ -534,7 +542,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes bounds of column \p i to \p lower and \p upper (GMP only method)
-   void changeBoundsRational(int i, const mpq_t* lower, const mpq_t* upper);
+   void changeBoundsRational(int i, const rational_t* lower, const rational_t* upper);
 #endif
 
    /// changes objective function vector to \p obj
@@ -545,7 +553,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes objective coefficient of column i to \p obj (GMP only method)
-   void changeObjRational(int i, const mpq_t* obj);
+   void changeObjRational(int i, const rational_t* obj);
 #endif
 
    /// changes matrix entry in row \p i and column \p j to \p val
@@ -553,7 +561,7 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// changes matrix entry in row \p i and column \p j to \p val (GMP only method)
-   void changeElementRational(int i, int j, const mpq_t* val);
+   void changeElementRational(int i, int j, const rational_t* val);
 #endif
 
    /// removes row \p i
@@ -751,22 +759,22 @@ public:
 
 #ifdef SOPLEX_WITH_GMP
    /// gets the primal solution vector if available; returns true on success (GMP only method)
-   bool getPrimalRational(mpq_t* vector, const int size);
+   bool getPrimalRational(rational_t* vector, const int size);
 
    /// gets the vector of slack values if available; returns true on success (GMP only method)
-   bool getSlacksRational(mpq_t* vector, const int size);
+   bool getSlacksRational(rational_t* vector, const int size);
 
    /// gets the primal ray if LP is unbounded; returns true on success (GMP only method)
-   bool getPrimalRayRational(mpq_t* vector, const int size);
+   bool getPrimalRayRational(rational_t* vector, const int size);
 
    /// gets the dual solution vector if available; returns true on success (GMP only method)
-   bool getDualRational(mpq_t* vector, const int size);
+   bool getDualRational(rational_t* vector, const int size);
 
    /// gets the vector of reduced cost values if available; returns true on success (GMP only method)
-   bool getRedCostRational(mpq_t* vector, const int size);
+   bool getRedCostRational(rational_t* vector, const int size);
 
    /// gets the Farkas proof if LP is infeasible; returns true on success (GMP only method)
-   bool getDualFarkasRational(mpq_t* vector, const int size);
+   bool getDualFarkasRational(rational_t* vector, const int size);
 #endif
 
    /// get size of primal solution

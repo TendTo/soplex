@@ -10,8 +10,10 @@
 #cmakedefine SOPLEX_WITH_CPPMPF
 #cmakedefine SOPLEX_WITH_FLOAT128
 #cmakedefine SOPLEX_WITH_GMP
+#cmakedefine SOPLEX_WITH_LIGHT_RAT
 #cmakedefine SOPLEX_WITH_MPFR
 #cmakedefine SOPLEX_WITH_PAPILO
 #cmakedefine SOPLEX_WITH_ZLIB
+#cmakedefine SOPLEX_WORDS_BIGENDIAN
 
 #endif

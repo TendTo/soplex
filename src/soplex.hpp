@@ -51,6 +51,10 @@
 #ifdef SOPLEX_WITH_ZLIB
 #include <zlib.h>
 #endif
+#ifdef SOPLEX_WITH_LIGHT_RAT
+#include "soplex/rational.h"
+#include "soplex/lightrat.h"
+#endif
 
 
 /// maximum length of lines in settings file
@@ -58,6 +62,16 @@
 
 /// default setting for LU refactorization interval
 #define SOPLEX_REFACTOR_INTERVAL 200
+
+#ifdef SOPLEX_WITH_GMP
+#ifdef SOPLEX_WITH_LIGHT_RAT
+#define rational_set spx_rat_set
+#define rational_get_d spx_rat_get_d
+#else
+#define rational_set mpq_set
+#define rational_get_d mpq_get_d
+#endif
+#endif
 
 namespace soplex
 {
@@ -878,7 +892,7 @@ bool SoPlexBase<R>::getDualFarkasReal(R* vector, int dim)
 #ifdef SOPLEX_WITH_GMP
 /// gets the primal solution vector if available; returns true on success (GMP only method)
 template <class R>
-bool SoPlexBase<R>::getPrimalRational(mpq_t* vector, const int size)
+bool SoPlexBase<R>::getPrimalRational(rational_t* vector, const int size)
 {
 #ifndef SOPLEX_WITH_BOOST
    SPX_MSG_ERROR(std::cerr << "ERROR: rational solve without Boost not defined!" << std::endl;)
@@ -891,7 +905,7 @@ bool SoPlexBase<R>::getPrimalRational(mpq_t* vector, const int size)
       _syncRationalSolution();
 
       for(int i = 0; i < numColsRational(); i++)
-         mpq_set(vector[i], _solRational._primal[i].backend().data());
+         rational_set(vector[i], _solRational._primal[i].backend().data());
 
       return true;
    }
@@ -904,7 +918,7 @@ bool SoPlexBase<R>::getPrimalRational(mpq_t* vector, const int size)
 
 /// gets the vector of slack values if available; returns true on success (GMP only method)
 template <class R>
-bool SoPlexBase<R>::getSlacksRational(mpq_t* vector, const int size)
+bool SoPlexBase<R>::getSlacksRational(rational_t* vector, const int size)
 {
 #ifndef SOPLEX_WITH_BOOST
    SPX_MSG_ERROR(std::cerr << "ERROR: rational solve without Boost not defined!" << std::endl;)
@@ -917,7 +931,7 @@ bool SoPlexBase<R>::getSlacksRational(mpq_t* vector, const int size)
       _syncRationalSolution();
 
       for(int i = 0; i < numRowsRational(); i++)
-         mpq_set(vector[i], _solRational._slacks[i].backend().data());
+         rational_set(vector[i], _solRational._slacks[i].backend().data());
 
       return true;
    }
@@ -931,7 +945,7 @@ bool SoPlexBase<R>::getSlacksRational(mpq_t* vector, const int size)
 
 /// gets the primal ray if LP is unbounded; returns true on success (GMP only method)
 template <class R>
-bool SoPlexBase<R>::getPrimalRayRational(mpq_t* vector, const int size)
+bool SoPlexBase<R>::getPrimalRayRational(rational_t* vector, const int size)
 {
 #ifndef SOPLEX_WITH_BOOST
    SPX_MSG_ERROR(std::cerr << "ERROR: rational solve without Boost not defined!" << std::endl;)
@@ -944,7 +958,7 @@ bool SoPlexBase<R>::getPrimalRayRational(mpq_t* vector, const int size)
       _syncRationalSolution();
 
       for(int i = 0; i < numColsRational(); i++)
-         mpq_set(vector[i], _solRational._primalRay[i].backend().data());
+         rational_set(vector[i], _solRational._primalRay[i].backend().data());
 
       return true;
    }
@@ -958,7 +972,7 @@ bool SoPlexBase<R>::getPrimalRayRational(mpq_t* vector, const int size)
 
 /// gets the dual solution vector if available; returns true on success (GMP only method)
 template <class R>
-bool SoPlexBase<R>::getDualRational(mpq_t* vector, const int size)
+bool SoPlexBase<R>::getDualRational(rational_t* vector, const int size)
 {
 #ifndef SOPLEX_WITH_BOOST
    SPX_MSG_ERROR(std::cerr << "ERROR: rational solve without Boost not defined!" << std::endl;)
@@ -971,7 +985,7 @@ bool SoPlexBase<R>::getDualRational(mpq_t* vector, const int size)
       _syncRationalSolution();
 
       for(int i = 0; i < numRowsRational(); i++)
-         mpq_set(vector[i], _solRational._dual[i].backend().data());
+         rational_set(vector[i], _solRational._dual[i].backend().data());
 
       return true;
    }
@@ -985,7 +999,7 @@ bool SoPlexBase<R>::getDualRational(mpq_t* vector, const int size)
 
 /// gets the vector of reduced cost values if available; returns true on success (GMP only method)
 template <class R>
-bool SoPlexBase<R>::getRedCostRational(mpq_t* vector, const int size)
+bool SoPlexBase<R>::getRedCostRational(rational_t* vector, const int size)
 {
 #ifndef SOPLEX_WITH_BOOST
    SPX_MSG_ERROR(std::cerr << "ERROR: rational solve without Boost not defined!" << std::endl;)
@@ -998,7 +1012,7 @@ bool SoPlexBase<R>::getRedCostRational(mpq_t* vector, const int size)
       _syncRationalSolution();
 
       for(int i = 0; i < numColsRational(); i++)
-         mpq_set(vector[i], _solRational._redCost[i].backend().data());
+         rational_set(vector[i], _solRational._redCost[i].backend().data());
 
       return true;
    }
@@ -1012,7 +1026,7 @@ bool SoPlexBase<R>::getRedCostRational(mpq_t* vector, const int size)
 
 /// gets the Farkas proof if LP is infeasible; returns true on success (GMP only method)
 template <class R>
-bool SoPlexBase<R>::getDualFarkasRational(mpq_t* vector, const int size)
+bool SoPlexBase<R>::getDualFarkasRational(rational_t* vector, const int size)
 {
 #ifndef SOPLEX_WITH_BOOST
    SPX_MSG_ERROR(std::cerr << "ERROR: rational solve without Boost not defined!" << std::endl;)
@@ -1025,7 +1039,7 @@ bool SoPlexBase<R>::getDualFarkasRational(mpq_t* vector, const int size)
       _syncRationalSolution();
 
       for(int i = 0; i < numRowsRational(); i++)
-         mpq_set(vector[i], _solRational._dualFarkas[i].backend().data());
+         rational_set(vector[i], _solRational._dualFarkas[i].backend().data());
 
       return true;
    }
@@ -2204,8 +2218,8 @@ void SoPlexBase<R>::changeRowReal(int i, const LPRowBase<R>& lprow)
 #ifdef SOPLEX_WITH_GMP
 /// adds a single column (GMP only method)
 template <class R>
-void SoPlexBase<R>::addColRational(const mpq_t* obj, const mpq_t* lower, const mpq_t* colValues,
-                                   const int* colIndices, const int colSize, const mpq_t* upper)
+void SoPlexBase<R>::addColRational(const rational_t* obj, const rational_t* lower, const rational_t* colValues,
+                                   const int* colIndices, const int colSize, const rational_t* upper)
 {
    assert(_rationalLP != nullptr);
 
@@ -2228,9 +2242,9 @@ void SoPlexBase<R>::addColRational(const mpq_t* obj, const mpq_t* lower, const m
 
 /// adds a set of columns (GMP only method)
 template <class R>
-void SoPlexBase<R>::addColsRational(const mpq_t* obj, const mpq_t* lower, const mpq_t* colValues,
+void SoPlexBase<R>::addColsRational(const rational_t* obj, const rational_t* lower, const rational_t* colValues,
                                     const int* colIndices, const int* colStarts, const int* colLengths, const int numCols,
-                                    const int numValues, const mpq_t* upper)
+                                    const int numValues, const rational_t* upper)
 {
    assert(_rationalLP != nullptr);
 
@@ -2826,8 +2840,8 @@ void SoPlexBase<R>::addRowRational(const LPRowRational& lprow)
 #ifdef SOPLEX_WITH_GMP
 /// adds a single row  (GMP only method)
 template <class R>
-void SoPlexBase<R>::addRowRational(const mpq_t* lhs, const mpq_t* rowValues, const int* rowIndices,
-                                   const int rowSize, const mpq_t* rhs)
+void SoPlexBase<R>::addRowRational(const rational_t* lhs, const rational_t* rowValues, const int* rowIndices,
+                                   const int rowSize, const rational_t* rhs)
 {
    assert(_rationalLP != nullptr);
 
@@ -2849,9 +2863,9 @@ void SoPlexBase<R>::addRowRational(const mpq_t* lhs, const mpq_t* rowValues, con
 
 /// adds a set of rows  (GMP only method)
 template <class R>
-void SoPlexBase<R>::addRowsRational(const mpq_t* lhs, const mpq_t* rowValues, const int* rowIndices,
+void SoPlexBase<R>::addRowsRational(const rational_t* lhs, const rational_t* rowValues, const int* rowIndices,
                                     const int* rowStarts, const int* rowLengths, const int numRows, const int numValues,
-                                    const mpq_t* rhs)
+                                    const rational_t* rhs)
 {
    assert(_rationalLP != nullptr);
 
@@ -3004,7 +3018,7 @@ void SoPlexBase<R>::changeLhsRational(int i, const Rational& lhs)
 #ifdef SOPLEX_WITH_GMP
 /// changes left-hand side of row \p i to \p lhs (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeLhsRational(int i, const mpq_t* lhs)
+void SoPlexBase<R>::changeLhsRational(int i, const rational_t* lhs)
 {
    assert(_rationalLP != nullptr);
 
@@ -3052,7 +3066,7 @@ void SoPlexBase<R>::changeRhsRational(const VectorRational& rhs)
 #ifdef SOPLEX_WITH_GMP
 /// changes right-hand side vector to \p rhs (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeRhsRational(const mpq_t* rhs, int rhsSize)
+void SoPlexBase<R>::changeRhsRational(const rational_t* rhs, int rhsSize)
 {
    assert(_rationalLP != nullptr);
 
@@ -3143,7 +3157,7 @@ void SoPlexBase<R>::changeRangeRational(int i, const Rational& lhs, const Ration
 #ifdef SOPLEX_WITH_GMP
 /// changes left-hand side of row \p i to \p lhs (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeRangeRational(int i, const mpq_t* lhs, const mpq_t* rhs)
+void SoPlexBase<R>::changeRangeRational(int i, const rational_t* lhs, const rational_t* rhs)
 {
    assert(_rationalLP != nullptr);
 
@@ -3231,7 +3245,7 @@ void SoPlexBase<R>::changeLowerRational(int i, const Rational& lower)
 #ifdef SOPLEX_WITH_GMP
 /// changes lower bound of column i to \p lower (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeLowerRational(int i, const mpq_t* lower)
+void SoPlexBase<R>::changeLowerRational(int i, const rational_t* lower)
 {
    assert(_rationalLP != nullptr);
 
@@ -3299,7 +3313,7 @@ void SoPlexBase<R>::changeUpperRational(int i, const Rational& upper)
 #ifdef SOPLEX_WITH_GMP
 /// changes upper bound of column i to \p upper (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeUpperRational(int i, const mpq_t* upper)
+void SoPlexBase<R>::changeUpperRational(int i, const rational_t* upper)
 {
    assert(_rationalLP != nullptr);
 
@@ -3366,7 +3380,7 @@ void SoPlexBase<R>::changeBoundsRational(int i, const Rational& lower, const Rat
 #ifdef SOPLEX_WITH_GMP
 /// changes bounds of column \p i to \p lower and \p upper (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeBoundsRational(int i, const mpq_t* lower, const mpq_t* upper)
+void SoPlexBase<R>::changeBoundsRational(int i, const rational_t* lower, const rational_t* upper)
 {
    assert(_rationalLP != nullptr);
 
@@ -3429,7 +3443,7 @@ void SoPlexBase<R>::changeObjRational(int i, const Rational& obj)
 #ifdef SOPLEX_WITH_GMP
 /// changes objective coefficient of column i to \p obj (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeObjRational(int i, const mpq_t* obj)
+void SoPlexBase<R>::changeObjRational(int i, const rational_t* obj)
 {
    assert(_rationalLP != nullptr);
 
@@ -3471,7 +3485,7 @@ void SoPlexBase<R>::changeElementRational(int i, int j, const Rational& val)
 #ifdef SOPLEX_WITH_GMP
 /// changes matrix entry in row \p i and column \p j to \p val (GMP only method)
 template <class R>
-void SoPlexBase<R>::changeElementRational(int i, int j, const mpq_t* val)
+void SoPlexBase<R>::changeElementRational(int i, int j, const rational_t* val)
 {
    assert(_rationalLP != nullptr);
 
@@ -3484,7 +3498,7 @@ void SoPlexBase<R>::changeElementRational(int i, int j, const mpq_t* val)
    _rationalLP->changeElement(i, j, val);
 
    if(intParam(SoPlexBase<R>::SYNCMODE) == SYNCMODE_AUTO)
-      _changeElementReal(i, j, mpq_get_d(*val));
+      _changeElementReal(i, j, rational_get_d(*val));
 
    _invalidateSolution();
 }

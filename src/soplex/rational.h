@@ -44,11 +44,19 @@
 #ifdef SOPLEX_WITH_GMP
 #include <boost/multiprecision/gmp.hpp>
 
+#ifdef SOPLEX_WITH_LIGHT_RAT
+#include "soplex/lightrat.h"
+#endif
+
 namespace soplex
 {
 
 using namespace boost::multiprecision;
+#ifdef SOPLEX_WITH_LIGHT_RAT
+using Rational = number<LightRat, et_off>;
+#else
 using Rational = number<gmp_rational, et_off>;
+#endif
 using Integer = number<gmp_int, et_off>;
 inline void SpxLcm(Integer& result, Integer a, Integer b)
 {

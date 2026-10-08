@@ -86,6 +86,7 @@ BOOST    =  false
 GMP      =  auto
 MPFR     =  auto
 SYSTEM_FMT = false
+LIGHT_RAT = false
 
 ifeq ($(OSTYPE),darwin)
 COMP		=	clang
@@ -611,8 +612,17 @@ endif
 		@echo "LAST_USRLDFLAGS=$(USRLDFLAGS)" >> $(LASTSETTINGS)
 		@echo "LAST_USRARFLAGS=$(USRARFLAGS)" >> $(LASTSETTINGS)
 		@echo "LAST_USRDFLAGS=$(USRDFLAGS)" >> $(LASTSETTINGS)
+
+# Infer the endianess of the architecture
+ARCH := $(shell uname -m)
+ifeq ($(ARCH),$(filter $(ARCH),ppc ppc64 s390x sparc))
+		@echo "#define SOPLEX_WORDS_BIGENDIAN" >> $(CONFIGFILE)
+endif
 ifeq ($(SYSTEM_FMT), true)
 		@echo "#define SOPLEX_WITH_SYSTEM_FMT" >> $(CONFIGFILE)
+endif
+ifeq ($(LIGHT_RAT), true)
+		@echo "#define SOPLEX_WITH_LIGHT_RAT" >> $(CONFIGFILE)
 endif
 ifeq ($(GMP), true)
 		@echo "#define SOPLEX_WITH_GMP" >> $(CONFIGFILE)
@@ -697,6 +707,11 @@ ifneq ($(SYSTEM_FMT),false)
 		$(error invalid SYSTEM_FMT flag selected: SYSTEM_FMT=$(SYSTEM_FMT). Possible options are: true false)
 endif
 endif
+ifneq ($(LIGHT_RAT),true)
+ifneq ($(LIGHT_RAT),false)
+		$(error invalid LIGHT_RAT flag selected: LIGHT_RAT=$(LIGHT_RAT). Possible options are: true false)
+endif
+endif
 ifneq ($(GMP),true)
 ifneq ($(GMP),false)
 		$(error invalid GMP flag selected: GMP=$(GMP). Possible options are: true false)
@@ -724,6 +739,9 @@ endif
 errorhints:
 ifeq ($(SYSTEM_FMT),true)
 		@echo "build failed with SYSTEM_FMT=true: if FMT is not available, try building with SYSTEM_FMT=false"
+endif
+ifeq ($(LIGHT_RAT),true)
+		@echo "build failed with LIGHT_RAT=true: maybe the compiler does not support the necessary features"
 endif
 ifeq ($(MPFR),true)
 		@echo "build failed with MPFR=true: if MPFR is not available, try building with MPFR=false"
