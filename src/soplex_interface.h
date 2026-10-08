@@ -102,6 +102,7 @@ char* SoPlex_getPrimalRationalString(void* soplex, int dim);
 #if defined(SOPLEX_WITH_GMP) && defined(SOPLEX_WITH_BOOST)
 void SoPlex_getPrimalRational_mpq(void* soplex, mpq_t* primal);
 void SoPlex_getDualRational_mpq(void* soplex, mpq_t* dual);
+void SoPlex_getDualFarkasRational_mpq(void* soplex, mpq_t* farkas);
 #endif
 
 /** gets dual solution **/
@@ -232,6 +233,8 @@ void SoPlex_getRowVectorReal(void* soplex, int i, int* nnonzeros, long* indices,
 /** get non-zero entries and indices of rational row i **/
 void SoPlex_getRowVectorRational(void* soplex, int i, int* nnonzeros, long* indices, long* coefsnum,
                                  long* coefsdenom);
+
+void SoPlex_getRowIndicesRational(void* soplex, int i, int* nnonzeros, int* indices);
 
 /** get lower and upper bounds of row i **/
 void SoPlex_getRowBoundsReal(void* soplex, int i, double* lb, double* ub);

@@ -839,6 +839,18 @@ void SoPlex_getRowVectorRational(void* soplex, int i, int* nnonzeros, long* indi
 #endif
 }
 
+void SoPlex_getRowIndicesRational(void* soplex, int i, int* nnonzeros, int* indices) {
+   SoPlex* so = (SoPlex*)(soplex);
+   const SVectorRational& row = so->rowVectorRational(i);
+
+   *nnonzeros = row.size();
+
+   for(int j = 0; j < *nnonzeros; ++j)
+   {
+      indices[j] = row.index(j);
+   }
+}
+
 /** get lower and upper bounds of row i **/
 void SoPlex_getRowBoundsReal(void* soplex, int i, double* lb, double* ub)
 {
@@ -897,6 +909,15 @@ void SoPlex_getDualRational_mpq(void *soplex, mpq_t *dual) {
    so->getDualRational(dualVec);
    for(int i = 0; i < dualVec.dim(); i++) {
       mpq_set(dual[i], dualVec[i].backend().data());
+   }
+}
+
+void SoPlex_getDualFarkasRational_mpq(void* soplex, mpq_t* farkas) {
+   SoPlex* so = (SoPlex*)(soplex);
+   VectorRational farkasVec(so->numRowsRational());
+   so->getDualFarkasRational(farkasVec);
+   for(int i = 0; i < farkasVec.dim(); i++) {
+      mpq_set(farkas[i], farkasVec[i].backend().data());
    }
 }
 
